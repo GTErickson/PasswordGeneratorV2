@@ -9,6 +9,12 @@ import java.util.Random;
 
 public class PasswordGeneratorGUI extends JFrame {
 
+    // Hardcoded character pools
+    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; 
+    private static final String NUMBERS = "0123456789";
+    private static final String SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?";  
+
     // GUI Components
     private JTextField lengthField;
     private JCheckBox lowercaseBox, uppercaseBox, numbersBox, symbolsBox;
@@ -33,6 +39,7 @@ public class PasswordGeneratorGUI extends JFrame {
 
         initializeComponents();
         layoutComponents();
+        addEventListeners();
 
         // Make the window visible
         setVisible(true);
@@ -121,6 +128,19 @@ public class PasswordGeneratorGUI extends JFrame {
         bottomPanel.add(strengthLabel, BorderLayout.SOUTH);
 
         add(bottomPanel, BorderLayout.SOUTH);
+    }
+
+    private void addEventListeners() {
+        generateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generatePassword();
+            }
+        });
+    }
+
+    private void generatePassword() {
+        System.out.println("Generate Password");
     }
 
     public static void main(String[] args) {
