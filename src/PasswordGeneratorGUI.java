@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard ;
 import java.util.Random;
 
 
@@ -19,6 +21,7 @@ public class PasswordGeneratorGUI extends JFrame {
     private JTextArea passwordArea;
     private JLabel strengthLabel;
     private JButton generateButton;
+    private JButton copyButton;
 
     public PasswordGeneratorGUI() {
 
@@ -66,6 +69,11 @@ public class PasswordGeneratorGUI extends JFrame {
         // Generate password button
         generateButton = new JButton("Generate Password");
         generateButton.setPreferredSize(new Dimension(150, 30));
+
+        // Copy button
+        copyButton = new JButton("Copy to Clipboard");
+        copyButton.setPreferredSize(new Dimension(150, 30));
+        copyButton.setEnabled(false);
     }
 
     private void layoutComponents() {
@@ -113,7 +121,13 @@ public class PasswordGeneratorGUI extends JFrame {
         gbc.gridy = 6;
         gbc.insets = new Insets(15, 0, 10, 0);
         gbc.anchor = GridBagConstraints.CENTER;
-        centerPanel.add(generateButton, gbc);
+        
+        // Button Panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        buttonPanel.add(generateButton);
+        buttonPanel.add(copyButton);
+
+        centerPanel.add(buttonPanel, gbc);
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -133,6 +147,13 @@ public class PasswordGeneratorGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 generatePassword();
+            }
+        });
+
+        copyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                copyToClipboard();
             }
         });
     }
@@ -171,8 +192,33 @@ public class PasswordGeneratorGUI extends JFrame {
             passwordArea.setText(password);
             strengthLabel.setText("Password Strength: " + getPasswordStrength(length, hasLower, hasUpper, hasNumbers, hasSymbols));
 
+            // Endable copy button
+            copyButton.setEnabled(true);
+
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Please enter a valid number for the password length!", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Function for copying generated password to clipboard
+    private void copyToClipboard() {
+        String password = passwordArea.getText();
+
+        if (password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No password to copy! Generate a password first.", "No Password", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            StringSelection selection = new StringSelection(password);
+
+            clipboard.setContents(selection, null);
+
+            JOptionPane. showMessageDialog(this, "Password copied to clipboard!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Failed to copy passwoed to clipboard: " + ex.getMessage(), "Copy Failed", JOptionPane.ERROR_MESSAGE);
         }
     }
 
